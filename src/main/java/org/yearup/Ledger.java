@@ -4,10 +4,8 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.io.FileReader;
 
 
 public class Ledger {
@@ -38,16 +36,19 @@ public class Ledger {
         switch (choice) {
             case "D":
                 addDeposit();
+                break;
 
             case "P":
                 makePayment();
+                break;
 
             case "L":
                 displayLedgerScreen();
+                break;
 
             case "X":
                 System.out.println("\nExit..Saving all changes");
-                return;
+                break;
             default:
                 System.out.println("Invalid option, Please try again");
 
@@ -66,8 +67,11 @@ public class Ledger {
             System.out.println("Please enter the deposit description: ");
             String description = scanner.nextLine();
 
-            DateTimeFormatter formatter= DateTimeFormatter.ofPattern("HH:mm:ss");
-            String[] record = {LocalDate.now().toString(), LocalTime.now().format(formatter), description, String.valueOf(amount)};
+            System.out.println("Please enter the vendor:");
+            String vendor = scanner.nextLine();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String[] record = {LocalDate.now().toString(), LocalTime.now().format(formatter), description, vendor, String.valueOf(amount)};
             writer.write(String.join("|", record));
             writer.newLine();
             System.out.println("Deposit added successfully");
@@ -109,7 +113,7 @@ public class Ledger {
         }
         displayHomeScreen();
     }
- //   public ArrayList<Trasaction>loadTransactions()
+    //   public ArrayList<Transaction>loadTransactions()
 
 
     public void displayLedgerScreen() throws IOException {
@@ -130,31 +134,62 @@ public class Ledger {
         {
             case "A":
                 displayAllEntries();
+                break;
             case "D":
                 displayAllDeposit();
+                break;
             case "P":
                 displayAllPayments();
+                break;
             case "R":
                 displayTheReports();
+                break;
             case "H":
                 displayHomeScreen();
+                break;
             default:
                 System.out.println("Invalid option, Please try again");
 
         }
     }
 
-    private void displayAllPayments() throws IOException
-    {   //open the file stream
+    public void displayAllEntries() throws IOException {
+        //open the file stream
         FileReader fileReader = new FileReader("target/transactions.csv");
         // create a buffered reader
         BufferedReader reader = new BufferedReader(fileReader);
-        //reader.readLine();
 
         String line = reader.readLine();
-        while(line != null)
-        {
-            String[]columns = line.split("\\|");
+        while (line != null) {
+            String[] columns = line.split("\\|");
+            //create variable for each column
+            LocalDate date = LocalDate.parse(columns[0]);
+            LocalTime time = LocalTime.parse(columns[1]);
+            String description = columns[2];
+            String vendor = columns[3];
+            double amount = Double.parseDouble(columns[4]);
+            //create a new output with the values from the row
+            Records record = new Records(date, time, description, vendor, amount);
+
+            //display all entries
+            System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+
+            line = reader.readLine();
+
+        }
+        reader.close();
+        displayLedgerScreen();
+    }
+
+    public void displayAllDeposit() throws IOException {
+        //open the file stream
+        FileReader fileReader = new FileReader("target/transactions.csv");
+        // create a buffered reader
+        BufferedReader reader = new BufferedReader(fileReader);
+
+        String line = reader.readLine();
+        while (line != null) {
+            String[] columns = line.split("\\|");
             //create variable for each column
             LocalDate date = LocalDate.parse(columns[0]);
             LocalTime time = LocalTime.parse(columns[1]);
@@ -163,32 +198,234 @@ public class Ledger {
             double amount = Double.parseDouble(columns[4]);
 
             //create a new output with the values from the row
-            Records record = new Records(date,time,description,vendor,amount);
+            Records record = new Records(date, time, description, vendor, amount);
 
-            //use the record
-            System.out.println(record.getDate() +"  "+record.getTime()+"  "+record.getDescription()+"  "+record.getVendor()+"  $"+record.getAmount());
-            break;
+            //check if payment is a deposit and display the details
+            if (record.getAmount() > 0) {
+                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+            }
+
+            line = reader.readLine();
+
         }
         reader.close();
+        displayLedgerScreen();
+    }
+
+    private void displayAllPayments() throws IOException {   //open the file stream
+        FileReader fileReader = new FileReader("target/transactions.csv");
+        // create a buffered reader
+        BufferedReader reader = new BufferedReader(fileReader);
+        //reader.readLine();
+
+        String line = reader.readLine();
+        while(line != null)
+        {
+            String[] columns = line.split("\\|");
+            //create variable for each column
+            LocalDate date = LocalDate.parse(columns[0]);
+            LocalTime time = LocalTime.parse(columns[1]);
+            String description = columns[2];
+            String vendor = columns[3];
+            double amount = Double.parseDouble(columns[4]);
+
+            //create a new output with the values from the row
+            Records record = new Records(date, time, description, vendor, amount);
+            //check if it is a payment and display the details
+            if (record.getAmount() <= 0) {
+                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+            }
+
+            line = reader.readLine();
+            //use the record
+            // System.out.println(record.getDate() +"  "+record.getTime()+"  "+record.getDescription()+"  "+record.getVendor()+"  $"+record.getAmount());
+
+        }
+        reader.close();
+        displayLedgerScreen();
     }
 
 
-    public void displayAllDeposit()
-    {
-        ArrayList<Records> records = new ArrayList<>();
-        // load the array
-        FileInputStream stream;
-        Scanner fileScanner = null;
-        try
-        {
-            stream = new FileInputStream("target/transactions.csv");
-            fileScanner = new Scanner(stream);
-            fileScanner.nextLine();
+    private void displayTheReports() throws IOException {
+        System.out.println("\n\t\tReports\t\t");
+        System.out.println("--------------------------------------------");
+        System.out.println("1)Display month to date reports:");
+        System.out.println("2)Display Previous month report");
+        System.out.println("3)Display Year to date reports");
+        System.out.println("4)Display previous year reports");
+        System.out.println("5)Search by vendor");
+        System.out.println("0)Go back to report page");
+        System.out.println("---------------------------------------------");
+        System.out.println("Enter your option:");
 
-            while(fileScanner.hasNextLine())
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        switch (choice) {
+            case 1:
+                monthToDate();
+                break;
+            case 2:
+                previousMonth();
+                break;
+            case 3:
+                yearToDate();
+                break;
+            case 4:
+                previousYear();
+                break;
+            case 5:
+                searchByVendor();
+                break;
+            default:
+                System.out.println("Invalid option. Please try again");
+        }
+    }
+
+
+    private void monthToDate() throws IOException {// Get the current month and year
+        LocalDate now = LocalDate.now();
+        int currentMonth = now.getMonthValue();
+        int currentYear = now.getYear();
+
+        // Open the file stream
+        FileReader fileReader = new FileReader("target/transactions.csv");
+        // Create a buffered reader
+        BufferedReader reader = new BufferedReader(fileReader);
+
+        String line = reader.readLine();
+        while (line != null) {
+            String[] columns = line.split("\\|");
+            //create variable for each column
+            LocalDate date = LocalDate.parse(columns[0]);
+            LocalTime time = LocalTime.parse(columns[1]);
+            String description = columns[2];
+            String vendor = columns[3];
+            double amount = Double.parseDouble(columns[4]);
+
+            // Check if the transaction occurred in the current month and year
+            if (date.getMonthValue() == currentMonth && date.getYear() == currentYear) {
+                // Create a new output with the values from the row
+                Records record = new Records(date, time, description, vendor, amount);
+
+                // Display the transaction
+                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+            }
+
+            line = reader.readLine();
+        }
+        reader.close();
+        displayTheReports();
+    }
+
+    private void previousMonth() throws IOException
+    {   FileReader fileReader = new FileReader("target/transactions.csv");
+        BufferedReader reader = new BufferedReader(fileReader);
+        // Get the current date
+        LocalDate currentDate = LocalDate.now();
+        int currentMonth = currentDate.getMonthValue();
+        int currentYear = currentDate.getYear();
+        int previousMonth = currentMonth -1;
+        // Subtract one month to get the date for the previous month
+        //LocalDate previousMonthDate = currentDate.minusMonths(1);
+        
+        String line = reader.readLine();
+        while (line != null) 
+        {
+            String[] columns = line.split("\\|");
+            //create variable for each column
+            LocalDate date = LocalDate.parse(columns[0]);
+            LocalTime time = LocalTime.parse(columns[1]);
+            String description = columns[2];
+            String vendor = columns[3];
+            double amount = Double.parseDouble(columns[4]);
+
+            //loop through the csv file to check for month
+            if (date.getMonthValue() == previousMonth && date.getYear() == currentYear)
             {
-                 String line = fileScanner.nextLine();
-             //split line into fields
+                Records record = new Records(date, time, description, vendor, amount);
+                // Display the transaction
+                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+            }
+            line = reader.readLine();
+        }reader.close();
+        displayTheReports();
+    }
+
+    private void yearToDate() throws IOException
+    {
+        FileReader fileReader = new FileReader("target/transactions.csv");
+        BufferedReader reader = new BufferedReader(fileReader);
+        // Get the current year
+        int currentYear = LocalDate.now().getYear();
+
+
+        String line = reader.readLine();
+        while (line != null)
+        {
+            String[] columns = line.split("\\|");
+            //create variable for each column
+            LocalDate date = LocalDate.parse(columns[0]);
+            LocalTime time = LocalTime.parse(columns[1]);
+            String description = columns[2];
+            String vendor = columns[3];
+            double amount = Double.parseDouble(columns[4]);
+
+            //loop through the csv file to check for month
+            if (date.getYear() == currentYear && date.getDayOfYear() <=LocalDate.now().getDayOfYear())
+            {
+                Records record = new Records(date, time, description, vendor, amount);
+                // Display the transaction
+                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+            }
+            line = reader.readLine();
+        }
+        reader.close();
+        displayTheReports();
+    }
+
+
+    private void previousYear() throws IOException {
+        FileReader fileReader = new FileReader("target/transactions.csv");
+        BufferedReader reader = new BufferedReader(fileReader);
+        // Subtract one year to get the date for the previous year
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        int previousYear = currentYear -1;
+
+        String line = reader.readLine();
+        while (line != null)
+        {
+            String[] columns = line.split("\\|");
+            //create variable for each column
+            LocalDate date = LocalDate.parse(columns[0]);
+            LocalTime time = LocalTime.parse(columns[1]);
+            String description = columns[2];
+            String vendor = columns[3];
+            double amount = Double.parseDouble(columns[4]);
+
+            if(date.getYear()== previousYear)
+            {
+                Records record = new Records(date, time, description, vendor, amount);
+                // Display the transaction
+                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+            }
+            line = reader.readLine();
+        }reader.close();
+        displayTheReports();
+    }
+
+    private void searchByVendor() throws IOException {
+        System.out.println("Enter the vendor name:");
+        String vendorSearch = scanner.nextLine();
+        //open the file stream
+        FileReader fileReader = new FileReader("target/transactions.csv");
+        // create a buffered reader
+        BufferedReader reader = new BufferedReader(fileReader);
+
+        String line = null;
+        try {
+            line = reader.readLine();
+            while (line != null) {
                 String[] columns = line.split("\\|");
                 LocalDate date = LocalDate.parse(columns[0]);
                 LocalTime time = LocalTime.parse(columns[1]);
@@ -196,29 +433,18 @@ public class Ledger {
                 String vendor = columns[3];
                 double amount = Double.parseDouble(columns[4]);
 
-                //create ArrayList
-                Records record = new Records(date,time,description,vendor,amount);
-            }
+                if (vendor.equals(vendorSearch)) {
+                    Records record = new Records(date, time, description, vendor, amount);
+                    System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+                }
 
-        }
-        catch (FileNotFoundException e)
-        {
-            System.out.println("There was an error loading the file");
-        }
-        finally
-        {
-            if(fileScanner !=null)
-            {
-                fileScanner.close();
+                line = reader.readLine();
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-    }
+        displayTheReports();
 
-    private void displayAllEntries()
-    {
-    }
-    private void displayTheReports()
-    {
     }
 
 

@@ -172,7 +172,7 @@ public class Ledger {
             Records record = new Records(date, time, description, vendor, amount);
 
             //display all entries
-            System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+            System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
 
             line = reader.readLine();
 
@@ -202,7 +202,7 @@ public class Ledger {
 
             //check if payment is a deposit and display the details
             if (record.getAmount() > 0) {
-                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
             }
 
             line = reader.readLine();
@@ -233,7 +233,7 @@ public class Ledger {
             Records record = new Records(date, time, description, vendor, amount);
             //check if it is a payment and display the details
             if (record.getAmount() <= 0) {
-                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
             }
 
             line = reader.readLine();
@@ -308,7 +308,7 @@ public class Ledger {
                 Records record = new Records(date, time, description, vendor, amount);
 
                 // Display the transaction
-                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
             }
 
             line = reader.readLine();
@@ -344,7 +344,8 @@ public class Ledger {
             {
                 Records record = new Records(date, time, description, vendor, amount);
                 // Display the transaction
-                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+                //System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
             }
             line = reader.readLine();
         }reader.close();
@@ -375,7 +376,7 @@ public class Ledger {
             {
                 Records record = new Records(date, time, description, vendor, amount);
                 // Display the transaction
-                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
             }
             line = reader.readLine();
         }
@@ -407,7 +408,7 @@ public class Ledger {
             {
                 Records record = new Records(date, time, description, vendor, amount);
                 // Display the transaction
-                System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
             }
             line = reader.readLine();
         }reader.close();
@@ -435,7 +436,7 @@ public class Ledger {
 
                 if (vendor.equals(vendorSearch)) {
                     Records record = new Records(date, time, description, vendor, amount);
-                    System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
+                    System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());;
                 }
 
                 line = reader.readLine();

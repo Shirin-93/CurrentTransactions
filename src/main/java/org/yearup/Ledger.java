@@ -14,14 +14,12 @@ public class Ledger {
     public void run() throws IOException
     {
         displayHomeScreen();
-        //loadTransactions();
         displayLedgerScreen();
 
     }
-
     public void displayHomeScreen() throws IOException
     {
-        System.out.println(" \n\t\tHome Screen\t\t\n");
+        System.out.println(ColorCodes.RED+ColorCodes.WHITE_BACKGROUND+"\n\t\tHome Screen\t\t\n"+ColorCodes.RESET);
         System.out.println("-------------------------------------------------------------");
         System.out.println("What do you want to do?\n");
         System.out.println("D) Add Deposit");
@@ -29,7 +27,7 @@ public class Ledger {
         System.out.println("L) Display Ledger Screen");
         System.out.println("X) Exit\n");
         System.out.println("--------------------------------------------------------------");
-        System.out.println("Enter an option: ");
+        System.out.println(ColorCodes.GREEN+"Enter an option: "+ColorCodes.RESET);
 
         String choice = scanner.nextLine().toUpperCase();
 
@@ -74,7 +72,7 @@ public class Ledger {
             String[] record = {LocalDate.now().toString(), LocalTime.now().format(formatter), description, vendor, String.valueOf(amount)};
             writer.write(String.join("|", record));
             writer.newLine();
-            System.out.println("Deposit added successfully");
+            System.out.println(ColorCodes.RED+"Deposit added successfully"+ColorCodes.RESET);
 
         } catch (InputMismatchException e) {
             System.out.println("Invalid input");
@@ -99,11 +97,14 @@ public class Ledger {
             System.out.println("Please enter the payment description:");
             String description = scanner.nextLine();
 
+            System.out.println("Please enter the vendor:");
+            String vendor = scanner.nextLine();
+
             DateTimeFormatter formatter= DateTimeFormatter.ofPattern("HH:mm:ss");
-            String[] record = {LocalDate.now().toString(), LocalTime.now().format(formatter), description, String.valueOf(-amount)};
+            String[] record = {LocalDate.now().toString(), LocalTime.now().format(formatter), description, vendor,String.valueOf(-amount)};
             writer.write(String.join("|", record));
             writer.newLine();
-            System.out.println("Payment made successfully");
+            System.out.println(ColorCodes.RED+"Payment made successfully"+ColorCodes.RESET);
         } catch (InputMismatchException e) {
             System.out.println("Invalid input");
         } catch (IOException e) {
@@ -117,7 +118,7 @@ public class Ledger {
 
 
     public void displayLedgerScreen() throws IOException {
-        System.out.println("\n\t\tLedger Screen\t\t\n");
+        System.out.println(ColorCodes.WHITE_BACKGROUND+ColorCodes.RED+"\n\t\tLedger Screen\t\t\n"+ColorCodes.RESET);
         System.out.println("___________________________________________________");
         System.out.println("What do you want to do?");
         System.out.println("A) Display all entries");
@@ -126,7 +127,7 @@ public class Ledger {
         System.out.println("R) Display the reports:");
         System.out.println("H) Go back to home screen");
         System.out.println("---------------------------------------------------");
-        System.out.println("Enter your option: ");
+        System.out.println(ColorCodes.GREEN+"Enter your option: "+ColorCodes.RESET);
 
         String choice = scanner.nextLine().toUpperCase();
 
@@ -158,7 +159,7 @@ public class Ledger {
         FileReader fileReader = new FileReader("target/transactions.csv");
         // create a buffered reader
         BufferedReader reader = new BufferedReader(fileReader);
-
+        System.out.println(ColorCodes.WHITE_BACKGROUND+ColorCodes.CYAN+"\t\t\tDISPLAYING ALL ENTRIES:\n"+ColorCodes.RESET);
         String line = reader.readLine();
         while (line != null) {
             String[] columns = line.split("\\|");
@@ -172,7 +173,7 @@ public class Ledger {
             Records record = new Records(date, time, description, vendor, amount);
 
             //display all entries
-            System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
+            System.out.printf(ColorCodes.RED+"%-10s %-10s %-20s %-20s %.2f\n"+ColorCodes.RESET, record.getDate(), record.getTime(), record.getDescription(), record.getVendor(), record.getAmount());
 
             line = reader.readLine();
 
@@ -186,7 +187,7 @@ public class Ledger {
         FileReader fileReader = new FileReader("target/transactions.csv");
         // create a buffered reader
         BufferedReader reader = new BufferedReader(fileReader);
-
+        System.out.println(ColorCodes.WHITE_BACKGROUND+ColorCodes.CYAN+"\t\tDisplaying Your Deposit Reports:\n"+ColorCodes.RESET);
         String line = reader.readLine();
         while (line != null) {
             String[] columns = line.split("\\|");
@@ -202,7 +203,7 @@ public class Ledger {
 
             //check if payment is a deposit and display the details
             if (record.getAmount() > 0) {
-                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
+                System.out.printf(ColorCodes.RED+"%-10s %-10s %-20s %-20s %.2f\n"+ColorCodes.RESET, record.getDate(), record.getTime(), record.getDescription(), record.getVendor(), record.getAmount());
             }
 
             line = reader.readLine();
@@ -217,7 +218,7 @@ public class Ledger {
         // create a buffered reader
         BufferedReader reader = new BufferedReader(fileReader);
         //reader.readLine();
-
+        System.out.println(ColorCodes.WHITE_BACKGROUND+ColorCodes.CYAN+"\t\tYour Payments:\n"+ColorCodes.RESET);
         String line = reader.readLine();
         while(line != null)
         {
@@ -233,7 +234,7 @@ public class Ledger {
             Records record = new Records(date, time, description, vendor, amount);
             //check if it is a payment and display the details
             if (record.getAmount() <= 0) {
-                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
+                System.out.printf(ColorCodes.RED+"%-10s %-10s %-20s %-20s %.2f\n"+ColorCodes.RESET, record.getDate(), record.getTime(), record.getDescription(), record.getVendor(), record.getAmount());
             }
 
             line = reader.readLine();
@@ -247,7 +248,7 @@ public class Ledger {
 
 
     private void displayTheReports() throws IOException {
-        System.out.println("\n\t\tReports\t\t");
+        System.out.println(ColorCodes.PURPLE+"\n\t\tReports\t\t"+ColorCodes.RESET);
         System.out.println("--------------------------------------------");
         System.out.println("1)Display month to date reports:");
         System.out.println("2)Display Previous month report");
@@ -256,7 +257,7 @@ public class Ledger {
         System.out.println("5)Search by vendor");
         System.out.println("0)Go back to report page");
         System.out.println("---------------------------------------------");
-        System.out.println("Enter your option:");
+        System.out.println(ColorCodes.GREEN+"Enter your option:"+ColorCodes.RESET);
 
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -291,7 +292,7 @@ public class Ledger {
         FileReader fileReader = new FileReader("target/transactions.csv");
         // Create a buffered reader
         BufferedReader reader = new BufferedReader(fileReader);
-
+        System.out.println(ColorCodes.PURPLE+"\t\tMonth to Date Transactions:\n"+ColorCodes.RESET);
         String line = reader.readLine();
         while (line != null) {
             String[] columns = line.split("\\|");
@@ -308,7 +309,7 @@ public class Ledger {
                 Records record = new Records(date, time, description, vendor, amount);
 
                 // Display the transaction
-                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
+                System.out.printf(ColorCodes.CYAN+"%-10s %-10s %-20s %-20s %.2f\n"+ColorCodes.RESET, record.getDate(), record.getTime(), record.getDescription(), record.getVendor(), record.getAmount());
             }
 
             line = reader.readLine();
@@ -327,7 +328,7 @@ public class Ledger {
         int previousMonth = currentMonth -1;
         // Subtract one month to get the date for the previous month
         //LocalDate previousMonthDate = currentDate.minusMonths(1);
-        
+        System.out.println(ColorCodes.PURPLE+"\t\tPrevious Month Transactions:\n"+ColorCodes.RESET);
         String line = reader.readLine();
         while (line != null) 
         {
@@ -344,8 +345,7 @@ public class Ledger {
             {
                 Records record = new Records(date, time, description, vendor, amount);
                 // Display the transaction
-                //System.out.println(record.getDate() + "  " + record.getTime() + "  " + record.getDescription() + "\t\t" + record.getVendor() + "\t\t$" + record.getAmount());
-                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
+                System.out.printf(ColorCodes.CYAN+"%-10s %-10s %-20s %-20s %.2f\n"+ColorCodes.RESET, record.getDate(), record.getTime(), record.getDescription(), record.getVendor(), record.getAmount());
             }
             line = reader.readLine();
         }reader.close();
@@ -359,7 +359,7 @@ public class Ledger {
         // Get the current year
         int currentYear = LocalDate.now().getYear();
 
-
+        System.out.println(ColorCodes.PURPLE+"\t\tYear to Date Transactions:\n"+ColorCodes.RESET);
         String line = reader.readLine();
         while (line != null)
         {
@@ -376,7 +376,7 @@ public class Ledger {
             {
                 Records record = new Records(date, time, description, vendor, amount);
                 // Display the transaction
-                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
+                System.out.printf(ColorCodes.CYAN+"%-10s %-10s %-20s %-20s %.2f\n"+ColorCodes.RESET, record.getDate(), record.getTime(), record.getDescription(), record.getVendor(), record.getAmount());
             }
             line = reader.readLine();
         }
@@ -392,7 +392,7 @@ public class Ledger {
         LocalDate currentDate = LocalDate.now();
         int currentYear = currentDate.getYear();
         int previousYear = currentYear -1;
-
+        System.out.println(ColorCodes.PURPLE+"\t\tPrevious Year Transactions:\n"+ColorCodes.RESET);
         String line = reader.readLine();
         while (line != null)
         {
@@ -408,7 +408,8 @@ public class Ledger {
             {
                 Records record = new Records(date, time, description, vendor, amount);
                 // Display the transaction
-                System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());
+
+                System.out.printf(ColorCodes.CYAN+"%-10s %-10s %-20s %-20s %.2f\n"+ColorCodes.RESET, record.getDate(), record.getTime(), record.getDescription(), record.getVendor(), record.getAmount());
             }
             line = reader.readLine();
         }reader.close();
@@ -422,7 +423,7 @@ public class Ledger {
         FileReader fileReader = new FileReader("target/transactions.csv");
         // create a buffered reader
         BufferedReader reader = new BufferedReader(fileReader);
-
+        System.out.println(ColorCodes.PURPLE+"\t\tTransaction with your vendor:\n"+ColorCodes.RESET);
         String line = null;
         try {
             line = reader.readLine();
@@ -436,7 +437,7 @@ public class Ledger {
 
                 if (vendor.equals(vendorSearch)) {
                     Records record = new Records(date, time, description, vendor, amount);
-                    System.out.printf("%-10s %-10s %-20s %-20s %.2f\n",record.getDate(),record.getTime(),record.getDescription(),record.getVendor(),record.getAmount());;
+                    System.out.printf(ColorCodes.GREEN+"%-10s %-10s %-20s %-20s %.2f\n"+ColorCodes.RESET, record.getDate(), record.getTime(), record.getDescription(), record.getVendor(), record.getAmount());
                 }
 
                 line = reader.readLine();
